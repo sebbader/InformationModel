@@ -6,3 +6,4 @@ log
 results
 artifacts
 *.log
+catalog*.xml
