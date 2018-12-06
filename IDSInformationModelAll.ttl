@@ -30,6 +30,7 @@
 
 
 <https://mobi.com/ontologies/11/2017/IOFPOC#Product> a  owl:Class ;
+    dct:creater "IOF" ;
 	rdfs:label "Product" .
 
 #################################################################
