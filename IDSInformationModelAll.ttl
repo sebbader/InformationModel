@@ -27,6 +27,10 @@
                                               dct:creator "Sebastian Tramp" ;
                                               dct:publisher "Fraunhofer FIT" .
 
+
+
+<https://mobi.com/ontologies/11/2017/IOFPOC#Product> a  owl:Class .
+
 #################################################################
 #    Annotation properties
 #################################################################
