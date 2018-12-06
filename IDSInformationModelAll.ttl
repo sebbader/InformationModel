@@ -29,7 +29,8 @@
 
 
 
-<https://mobi.com/ontologies/11/2017/IOFPOC#Product> a  owl:Class .
+<https://mobi.com/ontologies/11/2017/IOFPOC#Product> a  owl:Class ;
+	rdfs:label "Product" .
 
 #################################################################
 #    Annotation properties
