@@ -35,11 +35,11 @@
 
 
 <https://w3id.org/ids/core/declarativeModel> rdf:type owl:Ontology ;
-                                              owl:imports <https://raw.githubusercontent.com/IndustrialDataSpace/InformationModel/develop/model/participant/references/vcard-20140522.ttl> ,
-                                                          <https://raw.githubusercontent.com/IndustrialDataSpace/InformationModel/develop/model/participant/references/org-20140412.ttl> ,
-                                                          <https://raw.githubusercontent.com/IndustrialDataSpace/InformationModel/develop/model/traceability/references/prov-o-20130430.ttl> ,
-                                                          <https://raw.githubusercontent.com/IndustrialDataSpace/InformationModel/develop/model/participant/references/foaf-20140114.ttl> ,
-                                                          <https://raw.githubusercontent.com/IndustrialDataSpace/InformationModel/develop/model/contract/references/odrl-20170916.ttl> ;
+                                              #owl:imports <https://raw.githubusercontent.com/IndustrialDataSpace/InformationModel/develop/model/participant/references/vcard-20140522.ttl> ,
+                                              #            <https://raw.githubusercontent.com/IndustrialDataSpace/InformationModel/develop/model/participant/references/org-20140412.ttl> ,
+                                              #            <https://raw.githubusercontent.com/IndustrialDataSpace/InformationModel/develop/model/traceability/references/prov-o-20130430.ttl> ,
+                                              #            <https://raw.githubusercontent.com/IndustrialDataSpace/InformationModel/develop/model/participant/references/foaf-20140114.ttl> ,
+                                              #            <https://raw.githubusercontent.com/IndustrialDataSpace/InformationModel/develop/model/contract/references/odrl-20170916.ttl> ;
                                               dct:creator "Jaroslav Pullmann" ,
                                                           "Christian Mader" ;
                                               owl:versionInfo "1.0.1" ;
