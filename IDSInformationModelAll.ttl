@@ -9,6 +9,31 @@
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @base <https://w3id.org/ids/core/declarativeModel> .
 
+@prefix idsc_lang: <https://w3id.org/idsa/code/language/> .
+@prefix idsc_mep: <https://w3id.org/idsa/code/mep/> .
+@prefix idsc_media: <https://w3id.org/idsa/code/mediatype/> .
+@prefix idsc_operation: <https://w3id.org/idsa/code/operation/> .
+@prefix idsc_standard: <https://w3id.org/idsa/code/standard/> .
+@prefix idsc_action: <https://w3id.org/idsa/code/action/> .
+@prefix idsc_content: <https://w3id.org/idsa/code/content/> .
+@prefix idsc_concept: <https://w3id.org/idsa/code/concept/> .
+
+@prefix appstore1:  <http://app4traffic.de/connector/appstore1/> .
+@prefix app1:       <http://app4traffic.de/connector/appstore1/app1/> .
+@prefix app2:       <http://app4traffic.de/connector/appstore1/app2/> .
+@prefix part1:      <https://im.internationaldataspaces.org/participant/part1> .
+@prefix data1: <https://aastat.gov.de/connector/conn2/data1/> .
+@prefix conn2: <https://aastat.gov.de/connector/conn2/> .
+@prefix data2: <https://aastat.gov.de/connector/conn2/data2/> .
+@prefix data3: <https://aastat.gov.de/connector/conn2/data3/> .
+
+
+# @prefix dbo: <http://dbpedia.org/ontology/> .
+# @prefix dbr: <http://dbpedia.org/resource/> .
+# @prefix dce: <http://purl.org/dc/elements/1.1/> .
+# @prefix schema: <http://schema.org/> .
+
+
 <https://w3id.org/ids/core/declarativeModel> rdf:type owl:Ontology ;
                                               owl:imports <https://raw.githubusercontent.com/IndustrialDataSpace/InformationModel/develop/model/participant/references/vcard-20140522.ttl> ,
                                                           <https://raw.githubusercontent.com/IndustrialDataSpace/InformationModel/develop/model/participant/references/org-20140412.ttl> ,
@@ -28,11 +53,579 @@
                                               dct:publisher "Fraunhofer FIT" .
 
 
-
+#################################################################
+#    External Vocabulary: IOF
+#################################################################
 <https://mobi.com/ontologies/11/2017/IOFPOC#Product> a  owl:Class ;
     dct:creator "IOF" ;
     dct:creator "srb" ;
 	rdfs:label "Product" .
+
+
+#################################################################
+#    Data Artifact 1
+#################################################################
+data1:
+    a ids:Text ;
+    ids:title "European highway statistics - accident report"@en ;
+    ids:description "Detailed accident analysis report based on European highway statistics data 2000 - 2017."@en;
+    ids:keyword "report"; 
+	ids:keyword "highway" ;
+	ids:keyword "statistics" ; 
+	ids:keyword "Europe" ;
+
+#	ids:keyword schema:Report ;
+#	ids:keyword dbr:Highway ;
+#	ids:keyword dbo:Statistic ;
+#	ids:keyword dbr:Europe ;
+
+#	a schema:Report ;
+#	schema:about dbr:Highway ;
+#	a dbo:Statistic ;
+#	dce:coverage dbr:Europe ;
+
+    ids:temporalCoverage [
+        a ids:Interval ;
+        ids:begin [ ids:date "2000-01-01"^^xsd:date ];
+        ids:end   [ ids:date "2017-12-31"^^xsd:date ]
+    ] ;
+    ids:language idsc_lang:ENGLISH ;
+    ids:representation [
+        a ids:TextRepresentation ;
+        ids:mediaType idsc_media:APPLICATION_PDF;
+        ids:instance data1:report_pdf ;
+    ] ;
+    ids:representation [
+        a ids:TextRepresentation ;
+        ids:mediaType idsc_media:APPLICATION_MSWORD;
+        ids:instance data1:report_doc ;
+    ] ;
+
+    # Communication
+    ids:endpoint [
+        a ids:StaticEndpoint ;
+        ids:endpointHost conn2:http_host ;
+        ids:endpointArtifact data1:report_pdf ;
+        ids:path "/reports/Highway_accident_statistics.pdf"
+    ] ;
+    ids:endpoint [
+        a ids:StaticEndpoint ;
+        ids:endpointHost conn2:http_host ;
+        ids:endpointArtifact data1:report_doc ;
+        ids:path "/reports/Highway_accident_statistics.doc"
+    ] ;
+
+    # Commodization
+    ids:contractOffer data1:offer .
+
+    # Identifiable materialization(s) - no blank nodes
+data1:report_pdf
+    a ids:Artifact ;
+    ids:byteSize "1923497"^^xsd:nonNegativeInteger ;
+    ids:fileName "Highway_accident_statistics.pdf" ;
+    ids:creationDate "2018-06-01"^^xsd:date ;
+    .
+
+data1:report_doc
+    a ids:Artifact ;
+    ids:byteSize "28923491"^^xsd:nonNegativeInteger ;
+    ids:fileName "Highway_accident_statistics.doc" ;
+    ids:creationDate "2018-06-01"^^xsd:date ;
+    .
+
+data1:offer
+    a ids:ContractOffer ;
+    ids:permission [
+        ids:assigner part1: ;
+        # individual target(s)
+        ids:targetArtifact data1:report_pdf ;
+        ids:targetArtifact data1:report_doc ;
+        ids:action idsc_action:USE ;
+        # Obligation
+        ids:duty [
+            ids:action idsc_action:COMPENSATE ;
+            ids:constraint [
+                ids:leftOperand     ids:payAmount ;
+                  ids:operator      ids:eq ;
+                  ids:rightOperand  25 ;
+                  ids:unit          <http://dbpedia.org/resource/Euro>
+            ]
+            # original ODRL construct does not fit model transformation because of indirect action-reference via rdf:value
+            #ids:action [
+            #    rdf:value idsc_action:COMPENSATE ;
+            #    ids:refinement  [
+            #        ids:leftOperand     ids:payAmount ;
+            #          ids:operator      ids:eq ;
+            #          ids:rightOperand  25 ;
+            #          ids:unit          <http://dbpedia.org/resource/Euro>
+            #    ]
+            #]
+        ]
+    ] .
+
+
+#################################################################
+#    Data Artifact 2
+#################################################################
+data2:
+    # More advanced example than data1
+    # - download of the overall resource (archive)
+    # - download of individual artifacts, defined variants of a generic content description (traffic data)
+    # - shared representation
+    # - enumerated instances explicitly distinguished by descriptive parameters
+    # - download, i.e. non-interactive access - no interface definition needed
+    # - plain, historical data, free of charge
+    #
+    ids:title "European highway statistics"@en ;
+    ids:description "Data collection about usage statistics of European highways"@en;
+    ids:keyword "highway", "statistics", "Europe";
+
+    # the collection is extended once per month
+    ids:accrualPeriodicity "P1M"^^xsd:duration ;
+
+    # Compressed representation of an overall resource snapshot
+    #
+    a ids:Container ;# this resource may be treated as a container
+    ids:representation [
+        a ids:ContainerRepresentation ;
+        ids:mediaType idsc_media:APPLICATION_TAR-GZIP ;# application/tar+gzip is not an official IANA Media type!
+        ids:instance data2:tar_gzip_archive ;
+        # a possible alternative:
+        # ids:packaging idsc_pack:TAR ;
+        # ids:compression idsc_pack:GZIP ;
+    ] ;
+    ids:endpoint [
+        a ids:StaticEndpoint ;
+        ids:endpointHost conn2:http_host ;
+        ids:endpointArtifact data2:tar_gzip_archive  ;
+        ids:path "/resource/archive/EuropeanHighwayStatistics_2000_2017.tar.gz"
+    ] .
+
+data2:tar_gzip_archive # Overall resource archive
+    a ids:Artifact ;
+    ids:byteSize "2123178072"^^xsd:nonNegativeInteger ;
+    ids:fileName "EuropeanHighwayStatistics_2000_2017.tar.gz" ;
+    ids:creationDate "2018-10-01"^^xsd:date .
+
+data2:
+    # general definition of descriptive parameters (dimensions) at resource level
+    #
+    ids:descriptionParameter data2:highway_param ;
+    ids:descriptionParameter data2:year_param ;
+    ids:descriptionParameter data2:month_param ;
+
+    # Generic content template
+    ids:contentPart data2:generic_content ;
+    .
+
+data2:highway_param
+    a ids:Parameter ;
+    ids:name "highway" ;
+    ids:description "highway ID (european route signage, e.g. E37)" ;
+    ids:parameterContent [
+        a ids:Data ;# String
+        ids:theme idsc_concept:HIGHWAY ;
+        ids:representation [
+            a ids:DataRepresentation ;
+            ids:dataType "http://www.w3.org/2001/XMLSchema#string"^^xsd:anyURI ;
+        ]
+    ] .
+
+data2:year_param
+    a ids:Parameter ;
+    ids:name "year" ;
+    ids:parameterContent [
+        a ids:Data; # ids:Number;
+        ids:theme idsc_concept:YEAR ;
+        ids:representation [
+            a ids:DataRepresentation ;
+            ids:dataType "http://www.w3.org/2001/XMLSchema#gYear"^^xsd:anyURI ;
+        ]
+    ] .
+
+data2:month_param
+    a ids:Parameter ;
+    ids:name "month" ;
+    ids:parameterContent [
+        a ids:Data ; # ids:Number;
+        ids:concept idsc_concept:MONTH ;
+        ids:representation [
+            a ids:DataRepresentation ;
+            ids:dataType "http://www.w3.org/2001/XMLSchema#int"^^xsd:anyURI ;
+        ]
+    ] .
+
+# Content is generally described in terms of "description parameters",
+# Artifacts correspond to individual permutations of those parameters.
+# Parametrized description makes the instances comparable.
+#
+data2:generic_content
+    a ids:Data ;
+    # parameter (sub)set that applies to given content's artifacts
+    # any single artifact should provide a value assignment for all of them
+    #
+    ids:parameterSet (
+        data2:highway_param
+        data2:year_param
+        data2:month_param
+    ) ;
+
+    # general coverage of the entire dataset
+    ids:temporalCoverage [
+        a ids:Interval ;
+        ids:begin [ ids:date "2000-01-01"^^xsd:date ];
+        ids:end   [ ids:date "2017-12-31"^^xsd:date ]
+    ] ;
+
+    ids:representation [
+        a ids:DataRepresentation ;
+        ids:mediaType idsc_media:TEXT_CSV ;
+        ids:instance
+            data2:E1_20000101,
+            # imagine plenty of artifacts here ...
+            data2:E421_20171231
+    ] .
+
+
+# Enumeration of individual parametrized content instances
+data2:E1_20000101
+    a ids:Artifact ;
+    ids:byteSize "9823132"^^xsd:nonNegativeInteger ;
+    ids:fileName "E1_20000101.csv" ;
+    ids:artifactParameterization [
+        a ids:ParameterAssignment;
+        ids:parameter data2:highway_param ;
+        ids:contentValue [ ids:value "E1" ];
+    ] ;
+    ids:artifactParameterization [
+        a ids:ParameterAssignment;
+        ids:parameter data2:year_param ;
+        ids:contentValue [ ids:value 2000 ];
+    ] ;
+    ids:artifactParameterization [
+        a ids:ParameterAssignment;
+        ids:parameter data2:month_param ;
+        ids:contentValue [ ids:value 1 ];
+    ] .
+
+# ...
+
+data2:E421_20171231
+    a ids:Artifact;
+    ids:byteSize "6174035"^^xsd:nonNegativeInteger ;
+    ids:fileName "E421_20171231.csv" ;
+    ids:artifactParameterization [
+        a ids:ParameterAssignment;
+        ids:parameter data2:highway_param ;
+        ids:contentValue  [ ids:value "E421" ];
+    ] ;
+    ids:artifactParameterization [
+        a ids:ParameterAssignment;
+        ids:parameter data2:year_param ;
+        ids:contentValue  [ ids:value 2018 ];
+    ] ;
+    ids:artifactParameterization [
+        a ids:ParameterAssignment;
+        ids:parameter data2:month_param ;
+        ids:contentValue  [ ids:value 9 ];
+    ] .
+
+data2:
+    ids:endpoint [
+      a ids:StaticEndpoint ;
+      ids:endpointHost conn2:http_host ;
+      ids:endpointArtifact data2:E1_20000101  ;
+      ids:path "/resource/content/E1_20000101.csv"
+    ] ;
+    ids:endpoint [
+      a ids:StaticEndpoint ;
+      ids:endpointHost conn2:http_host ;
+      ids:endpointArtifact data2:E421_20171231 ;
+      ids:path "/resource/content/E421_20171231.csv"
+    ] ;
+    ids:contractOffer [
+        a ids:ContractOffer ;
+        ids:permission [
+            ids:assigner part1: ;
+            ids:targetContent data2:generic_content ; # i.e. applies to any artifact / instance of given content
+            ids:action idsc_action:USE ;
+            # Obligation
+            ids:duty [
+                ids:action idsc_action:ATTRIBUTE ;
+            ]
+        ]
+    ] .
+
+
+
+#################################################################
+#    Data Artifact 3
+#################################################################
+
+data3:
+    # Interactive example
+    #
+    a ids:Resource ;
+    ids:title "Interactive European highway statistics portal"@en ;
+    ids:description "Data collection about usage statistics of European highways supporting client queries."@en;
+    ids:keyword "interactive", "highway", "statistics", "Europe" ;
+
+    ids:resourceInterface [
+        a ids:Interface ;
+        ids:title "Query interface for highway statistics" ;
+        ids:operation data3:query_highway_operation ;
+    ] ;
+
+    # Resource's content as exposed by the resource interface
+    ids:contentPart data3:highway_statistics ;
+
+    # Point of protocol-specific access
+    ids:resourceEndpoint data3:endpoint ;
+    .
+
+data3:query_highway_operation
+    a ids:QueryOperation ;
+    ids:pattern idsc_mep:IN_OUT ;
+    ids:name "Get statistics by highway" ;
+    ids:mandatoryInput # required dimension
+        data3:highway_param ;
+    ids:input # optional, additive
+        data3:year_param ,
+        data3:month_param ;
+    ids:output
+        data3:highway_statistics
+    .
+
+data3:endpoint
+    a ids:InteractiveEndpoint;
+    ids:endpointHost conn2:http_host ;
+    ids:path "/content/{highway}/{year?}/{month?}" ;
+    ids:endpointOperationBinding [
+        a ids:OperationBinding ;
+        ids:boundOperation  data3:query_highway_operation ;
+        ids:apiDefinition   data3:api_definition_resource ;
+    ] .
+
+data3:api_definition_resource
+    a ids:Software ;
+    ids:contentType idsc_content:INTERFACE_DEFINITION ;
+    ids:representation [
+        a ids:SoftwareRepresentation ;
+        ids:mediaType idsc_media:APPLICATION_OPENAPI_JSON ;
+        ids:instance data3:api_definition_artifact;
+    ];
+    ids:endpoint [
+        a ids:StaticEndpoint ;
+        ids:endpointHost conn2:http_host ;
+        ids:endpointArtifact data3:api_definition_artifact ;
+        ids:path "/api/OpenAPI.json"
+    ] .
+
+data3:api_definition_artifact
+    a ids:Artifact ;
+    ids:byteSize "1923497"^^xsd:nonNegativeInteger ;
+    ids:fileName "OpenAPI.json" ;
+    ids:creationDate "2018-06-01"^^xsd:date .
+
+# Same definition as in data2
+data3:highway_param
+    a ids:Parameter ;
+    ids:name "highway" ;
+    ids:description "highway ID (european route signage, e.g. E37)" ;
+    ids:parameterContent [
+        a ids:Data ; # ids:String ;
+        ids:theme idsc_concept:HIGHWAY ;
+        ids:representation [
+            a ids:DataRepresentation ;
+            ids:dataType "http://www.w3.org/2001/XMLSchema#string"^^xsd:anyURI ;
+        ]
+    ] .
+
+data3:year_param
+    a ids:Parameter ;
+    ids:name "year" ;
+    ids:parameterContent [
+        a ids:Data ; # ids:Number;
+        ids:theme idsc_concept:YEAR ;
+        ids:representation [
+            a ids:DataRepresentation ;
+            ids:dataType "http://www.w3.org/2001/XMLSchema#gYear"^^xsd:anyURI ;
+        ]
+    ] .
+
+data3:month_param
+    a ids:Parameter ;
+    ids:name "month" ;
+    ids:parameterContent [
+        a ids:Data ; # ids:Number;
+        ids:theme idsc_concept:MONTH ;
+        ids:representation [
+            a ids:DataRepresentation ;
+            ids:dataType "http://www.w3.org/2001/XMLSchema#int"^^xsd:anyURI ;
+        ]
+    ] .
+
+# Overall table retrieved as result
+data3:highway_statistics
+    a ids:Parameter ;
+    ids:name "highway statistics" ;
+    ids:parameterContent [
+        a ids:Data;
+        ids:representation [
+            a ids:DataRepresentation ;
+            ids:mediaType idsc_media:TEXT_CSV ;
+        ]
+    ]
+    .
+
+
+
+#################################################################
+#    Data App 1
+#################################################################
+app1:
+    a ids:Resource, ids:SystemAdapter ;
+    ids:title "Camera driver"@en ;
+    ids:description "Camera driver ingesting image content into a Connector via defined interface."@en;
+    ids:keyword "driver", "camera" ;
+    ids:representation [
+        a ids:SoftwareRepresentation ;
+        ids:mediaType idsc_media:APPLICATION_DATAAPP ; # assuming future support by TrustMe
+        # https://industrial-data-space.github.io/trusted-connector-documentation/docs/overview/#trustedplatform
+        ids:instance app1:adapter_app ;
+    ] ;
+
+    # Provision of the Data App Resource
+    ids:resourceEndpoint [
+        a ids:StaticEndpoint ;
+        ids:endpointHost appstore1:http_host ; # this resource is available via the App Store
+        ids:endpointArtifact app1:adapter_app ;
+        ids:path "/apps/adapter/CameraAdapter.app"
+    ]
+    .
+
+app1:adapter_app
+    a ids:Artifact ;
+    ids:byteSize "28467297"^^xsd:nonNegativeInteger ;
+    ids:fileName "CameraAdapter.app" ;
+    ids:creationDate "2018-06-01"^^xsd:date ;
+    .
+
+app1:
+    ids:softwareInterface [ # exposes the functionality of the Data App, instead of the Data App resource itself (ids:resourceInterface)
+        a ids:Interface ;
+        ids:title "Image provision interface" ;
+        ids:operation app1:provide_image ;
+    ] ;
+    .
+
+app1:provide_image
+    a ids:ProvideContentOperation ; # the driver e.g. pushes the images to via a PUB/SUB protocol
+    ids:pattern idsc_mep:OUT_ONLY ; # no client input needed
+    ids:name "Provide camera image" ;
+    ids:mandatoryOutput [
+        a ids:Parameter ;
+        ids:name "image" ;
+        ids:parameterContent [
+            a ids:Image ;
+            ids:representation [
+                a ids:ImageRepresentation ;
+                ids:mediaType idsc_media:IMAGE_JPEG;
+                ids:width 5184;
+                ids:height 3888;
+            ]
+        ]
+    ]
+    .
+
+
+
+#################################################################
+#    Data App 2
+#################################################################
+app2:
+    a ids:Resource, ids:DataProcessingApp ;
+    ids:title "Traffic image anonymization App"@en ;
+    ids:description "Data App for anonymization of traffic images."@en;
+    ids:keyword "image", "anonymization " ;
+    ids:representation [
+        a ids:SoftwareRepresentation ;
+        ids:mediaType idsc_media:APPLICATION_DATAAPP ;
+        ids:instance app2:processing_app ;
+    ] ;
+
+    # Provision of the Data App Resource
+    ids:resourceEndpoint [
+        a ids:StaticEndpoint ;
+        ids:endpointHost appstore1:http_host ;
+        ids:endpointArtifact app2:processing_app;
+        ids:path "/apps/processor/TrafficImageAnonymization.app"
+    ]
+    .
+
+app2:processing_app
+    a ids:Artifact ;
+    ids:byteSize "267297"^^xsd:nonNegativeInteger ;
+    ids:fileName "TrafficImageAnonymization.app" ;
+    ids:creationDate "2018-06-01"^^xsd:date ;
+    .
+
+app2:
+    ids:softwareInterface [
+        a ids:Interface ;
+        ids:title "Image anonymization interface" ;
+        ids:operation app2:anonymize_image ;
+    ] ;
+    .
+
+app2:anonymize_image
+    ids:name "Anonymize traffic surveillance image" ;
+    a ids:ProcessContentOperation ;
+    ids:operationType idsc_operation:ANONYMIZE ;
+    ids:pattern idsc_mep:IN_OUT;
+    ids:mandatoryInput [
+        a ids:Parameter ;
+        ids:name "traffic surveillance image" ;
+        ids:parameterContent [
+            a ids:Image ;
+            # the content is expected to comply with IEC 62676-4:2014
+            ids:representationStandard idsc_standard:IEC_62676_4_2014 ;
+            # any of these representations is valid
+            ids:representation [
+                a ids:ImageRepresentation ;
+                ids:mediaType idsc_media:IMAGE_JPEG;
+            ] ;
+            ids:representation [
+                a ids:ImageRepresentation ;
+                ids:mediaType idsc_media:IMAGE_PNG;
+            ];
+            ids:representation [
+                a ids:ImageRepresentation ;
+                ids:mediaType idsc_media:IMAGE_TIFF;
+            ]
+        ]
+    ] ;
+    ids:output [
+        a ids:Parameter ;
+        ids:name "anonymized traffic surveillance image" ;
+        ids:parameterContent [
+            a ids:Image ;
+            ids:representation [
+                a ids:ImageRepresentation ;
+                ids:mediaType idsc_media:IMAGE_JPEG;
+            ] ;
+            ids:representation [
+                a ids:ImageRepresentation ;
+                ids:mediaType idsc_media:IMAGE_PNG;
+            ];
+            ids:representation [
+                a ids:ImageRepresentation ;
+                ids:mediaType idsc_media:IMAGE_TIFF;
+            ]
+        ]
+    ]
+    .
+
 
 #################################################################
 #    Annotation properties
