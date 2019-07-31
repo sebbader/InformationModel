@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ## [Unreleased] - 2019-05-24
 - Changes applied according to issue [#55](https://github.com/IndustrialDataSpace/InformationModel/issues/55),  authorized by the WG.
 
+
 ### Added
 - Class `ids:SecurityGuarantee` added in `model/SecurityProfile.ttl` representing a formalized "guarantee" given by a Connector. Specific subclasses (service isolation guarantee) define a closed, enumerated set of reference values within `codes/SecurityGuarantee.ttl`.
 - To deal with OWA the *absence of a guarantee is explicitly indicated* by a type-specific "none" value (`idsc_sec:SERVICE_ISOLATION_NONE`). Validation should ensure no other contradicting value is set for a given guarantee type when assigned to "none".
