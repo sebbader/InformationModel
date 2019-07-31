@@ -10,7 +10,7 @@
 # -------
 
 ids:DigitalContent
-    a owl:Class;
+    a owl:Class;    
     rdfs:subClassOf ids:Described, dcat:Dataset;
     rdfs:label "Digital content"@en ;
     rdfs:comment "Digital content of a particular type providing hints on its usage, e.g. listening to an Audio, navigating a Structure or accessing a List by an index." ;
@@ -46,6 +46,7 @@ ids:DigitalContent
         idsm:forProperty ids:representation;
         idsm:relationType idsm:OneToMany;
     ];
+    idsm:abstract true ;
     rdfs:seeAlso
         <https://en.wikipedia.org/wiki/Digital_content> ,
         <http://www.ontodm.com/doku.php?id=ontodt> ,
@@ -103,12 +104,13 @@ ids:language
 ids:theme # ... "topic" / "subject" ?
     a owl:ObjectProperty;
     rdfs:subPropertyOf dcat:theme; # is a sub-property of dct:subject, comparable to qb:concept (?)
-    idsm:referenceByUrl true ;
+    idsm:referenceByUri true ;
     rdfs:label "theme"@en;
     idsm:labelPluralForm "themes"@en;
     rdfs:domain ids:DigitalContent;
     rdfs:range ids:Concept; # former "ContentCategory", skos:Concepts organized in a skos:ConceptScheme
     rdfs:comment "Abstract or concrete concept related to or referred by the content."@en.
+
 
 ids:keyword
     a owl:DatatypeProperty;
@@ -147,7 +149,7 @@ ids:accrualPeriodicity # consider irregular updates as well
     .
 
 ids:contentStandard
-    idsm:referenceByUrl true;
+    idsm:referenceByUri true;
     a owl:ObjectProperty ;
     rdfs:subPropertyOf dct:conformsTo ;
     rdfs:domain ids:DigitalContent ;
